@@ -1,5 +1,6 @@
 #pragma once
 #include "AutomatonToImage/AutomatonToImage.h"
+#include "Language.h"
 #include "Objects/FiniteAutomaton.h"
 #include <string>
 #include <vector>
@@ -46,8 +47,12 @@ class Logger {
 	// для отображения таблицы тестера word
 	static void log(int step, vector<int> lengths, vector<double> times,
 					vector<bool> belongs);
+	// таблицы в общем виде
+	static void log_table(vector<string> rows, vector<string> columns,
+						  vector<string> data);
 	// завершение шага
 	static void finish_step();
 	// завершение записи в файл
 	static void finish();
+	static string math_mode(string str);
 };

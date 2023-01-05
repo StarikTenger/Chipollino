@@ -180,7 +180,8 @@ GeneralObject Interpreter::apply_function(
 			   holds_alternative<ObjectDFA>(obj);
 	};
 
-	//if (is_automaton(arguments[0])) get_automaton(arguments[0]).set_trim_flag(is_trim);
+	// if (is_automaton(arguments[0]))
+	// get_automaton(arguments[0]).set_trim_flag(is_trim);
 	/*if (holds_alternative<ObjectNFA>(arguments[0])) {
 		get<ObjectNFA>(arguments[0]).value.set_trim_flag(is_trim);
 	}

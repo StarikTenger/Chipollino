@@ -31,6 +31,13 @@ void Logger::init() {
 		out << "\\usepackage[T2A]{fontenc}" << endl;
 		out << "\\usepackage[utf8]{inputenc}" << endl;
 		out << "\\usepackage[russian]{babel}" << endl;
+		out << "\\usepackage{geometry}" << endl;
+		out << "\\geometry{a4paper,tmargin=2cm,bmargin=2cm,lmargin=3cm,rmargin="
+			   "1cm}"
+			<< endl;
+		out << "\\sloppy" << endl;
+		out << "\\clubpenalty=10000" << endl;
+		out << "\\widowpenalty=10000" << endl;
 		out << "\\title{Отчет}" << endl;
 		out << "\\author{Чиполлино}" << endl;
 		out << "\\date{Москва, 2022}" << endl;
@@ -49,7 +56,9 @@ void Logger::init_step(string step_name) {
 	if (step_counter > 1) return;
 	ofstream out("./resources/report.tex", ios::app);
 	if (out.is_open()) {
-		out << step_name + "\n" << endl;
+		out << "\\begin{center}" << endl;
+		out << "\\textbf{" + step_name + "}" << endl;
+		out << "\\end{center}" << endl;
 	}
 	out.close();
 }
@@ -59,7 +68,7 @@ void Logger::log(string text) {
 	if (step_counter > 1) return;
 	ofstream out("./resources/report.tex", ios::app);
 	if (out.is_open()) {
-		out << text + "\n" << endl;
+		out << text + "\\\\" << endl;
 	}
 	out.close();
 }
@@ -70,7 +79,7 @@ void Logger::log(string text, string val) {
 	ofstream out("./resources/report.tex", ios::app);
 	if (out.is_open()) {
 		out << text + ": ";
-		out << val + "\n" << endl;
+		out << val + "\\\\" << endl;
 	}
 	out.close();
 }
@@ -83,11 +92,11 @@ void Logger::log(string a1, const FiniteAutomaton& fa1) {
 	if (out.is_open()) {
 		image_number += 1;
 		AutomatonToImage::to_image(f1, image_number);
-		out << a1 + ":\n" << endl;
+		out << a1 + ":\\\\" << endl;
 		char si[256];
 		sprintf(si,
 				"\\includegraphics[width=5in, "
-				"keepaspectratio]{output%d.png}\n",
+				"keepaspectratio]{output%d.png}\\\\",
 				image_number);
 		out << si << endl;
 	}
@@ -104,20 +113,20 @@ void Logger::log(string a1, string a2, const FiniteAutomaton& fa1,
 	if (out.is_open()) {
 		image_number += 1;
 		AutomatonToImage::to_image(f1, image_number);
-		out << a1 + ":\n" << endl;
+		out << a1 + ":\\\\" << endl;
 		char si[256];
 		sprintf(si,
 				"\\includegraphics[width=5in, "
-				"keepaspectratio]{output%d.png}\n",
+				"keepaspectratio]{output%d.png}\\\\",
 				image_number);
 		out << si << endl;
 
 		image_number += 1;
 		AutomatonToImage::to_image(f2, image_number);
-		out << a2 + ":\n" << endl;
+		out << a2 + ":\\\\" << endl;
 		sprintf(si,
 				"\\includegraphics[width=5in, "
-				"keepaspectratio]{output%d.png}\n",
+				"keepaspectratio]{output%d.png}\\\\",
 				image_number);
 		out << si << endl;
 	}
@@ -135,29 +144,29 @@ void Logger::log(string a1, string a2, string a3, const FiniteAutomaton& fa1,
 	if (out.is_open()) {
 		image_number += 1;
 		AutomatonToImage::to_image(f1, image_number);
-		out << a1 + ":\n" << endl;
+		out << a1 + ":\\\\" << endl;
 		char si[256];
 		sprintf(si,
 				"\\includegraphics[width=5in, "
-				"keepaspectratio]{output%d.png}\n",
+				"keepaspectratio]{output%d.png}\\\\",
 				image_number);
 		out << si << endl;
 
 		image_number += 1;
 		AutomatonToImage::to_image(f2, image_number);
-		out << a2 + ":\n" << endl;
+		out << a2 + ":\\\\" << endl;
 		sprintf(si,
 				"\\includegraphics[width=5in, "
-				"keepaspectratio]{output%d.png}\n",
+				"keepaspectratio]{output%d.png}\\\\",
 				image_number);
 		out << si << endl;
 
 		image_number += 1;
 		AutomatonToImage::to_image(f3, image_number);
-		out << a3 + ":\n" << endl;
+		out << a3 + ":\\" << endl;
 		sprintf(si,
 				"\\includegraphics[width=5in, "
-				"keepaspectratio]{output%d.png}\n",
+				"keepaspectratio]{output%d.png}\\\\",
 				image_number);
 		out << si << endl;
 	}
@@ -170,7 +179,7 @@ void Logger::log(int step, vector<int> lengths, vector<double> times,
 	if (step_counter > 1) return;
 	ofstream out("./resources/report.tex", ios::app);
 	if (out.is_open()) {
-		out << "\\begin{tabular}{llll}\n" << endl;
+		out << "\\begin{tabular}{llll}" << endl;
 		string s1 = "Количество итераций";
 		s1 = s1 + " & ";
 		s1 = s1 + "Длина строки";
@@ -198,7 +207,57 @@ void Logger::log(int step, vector<int> lengths, vector<double> times,
 				out << w1 + " & " + w2 + " & " + w3 + " & " + w4 << endl;
 			}
 		}
-		out << "\\end{tabular}\n" << endl;
+		out << "\\end{tabular}" << endl;
+	}
+	out.close();
+}
+
+void Logger::log_table(vector<string> rows, vector<string> columns,
+					   vector<string> data) {
+	if (!active) return;
+	if (step_counter > 1) return;
+	ofstream out("./resources/report.tex", ios::app);
+	if (out.is_open()) {
+		string format = "l";
+		string cols = "  & ";
+		string row = "";
+		for (int i = 0; i < columns.size(); i++) {
+			format += "l";
+			if (i != columns.size() - 1) {
+				cols += columns[i] + " & ";
+			} else {
+				cols += columns[i] + "\\\\";
+			}
+		}
+		format = "\\begin{tabular}{" + format + "}\n";
+		out << format << endl;
+		out << cols << endl;
+		int k = 0;
+		int j;
+		for (int i = 0; i < rows.size(); i++) {
+			row = rows[i] + " & ";
+			if (i != rows.size() - 1) {
+				for (j = 0; j < columns.size(); j++) {
+					if (j != columns.size() - 1) {
+						row = row + data[k + j] + " & ";
+					} else {
+						row = row + data[k + j] + "\\\\";
+					}
+				}
+				k += j;
+			} else {
+				for (j = 0; j < columns.size(); j++) {
+					if (j != columns.size() - 1) {
+						row = row + data[k + j] + " & ";
+					} else {
+						row = row + data[k + j];
+					}
+				}
+				k += j;
+			}
+			out << row << endl;
+		}
+		out << "\\end{tabular}" << endl;
 	}
 	out.close();
 }
@@ -209,7 +268,7 @@ void Logger::finish_step() {
 	if (step_counter > 0) return;
 	ofstream out("./resources/report.tex", ios::app);
 	if (out.is_open()) {
-		out << "\\newpage\n" << endl;
+		out << "\\newpage" << endl;
 	}
 	out.close();
 }
@@ -223,4 +282,44 @@ void Logger::finish() {
 	char cmd[1024];
 	sprintf(cmd, "pdflatex \"./resources/report.tex\" > pdflatex.log");
 	system(cmd);
+}
+
+string Logger::math_mode(string str) {
+	if (str.empty()) {
+		return str;
+	}
+	// cout << str << endl;
+	string str_math = "";
+	auto is_number = [](char c) { return c >= '0' && c <= '9'; };
+	for (size_t index = 0; index < str.size(); index++) {
+		char c = str[index];
+		// cout << "-------------" + index << endl;
+		// cout << c << endl;
+		if (c == ' ' && index != str.size() - 1) {
+			str_math += ", ";
+		} else if (c == '*') {
+			str_math += "^*";
+			// cout << "c is *" << endl;
+			// cout << "str_math " + str_math << endl;
+		} else if (is_number(c)) {
+			// cout << "c number" << endl;
+			string num = "";
+			for (index; index < str.size() && is_number(str[index]); index++) {
+				num += str[index];
+				// cout << "num " + num << endl;
+			}
+			num = "_{" + num + "}";
+			str_math += num;
+			index--;
+			// cout << "index " + to_string(index) << endl;
+			// cout << "str_math " + str_math << endl;
+		} else {
+			str_math += c;
+			// cout << "c else" << endl;
+			// cout << "str_math " + str_math << endl;
+		}
+	}
+	// cout << str_math << endl;
+	str_math = "$" + str_math + "$";
+	return str_math;
 }
