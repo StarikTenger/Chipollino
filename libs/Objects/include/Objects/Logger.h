@@ -50,4 +50,7 @@ class Logger {
 	static void finish_step();
 	// завершение записи в файл
 	static void finish();
+	// таблицы в общем виде
+	static void log_table(vector<string> rows, vector<string> columns,
+						  vector<string> data);
 };
